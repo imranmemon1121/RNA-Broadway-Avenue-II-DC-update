@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNA Broadway Avenue II - Deemed Conveyance & 7/12 Union Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .tab-btn.active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 700; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- TOP HEADER / NAV -->
+    <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 p-2.5 rounded-lg text-white">
+                    <i class="fa-solid font-bold text-xl fa-building-user"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-tight text-white leading-tight">RNA Broadway Avenue II</h1>
+                    <p class="text-xs text-slate-400 font-medium">Deemed Conveyance & 7/12 Extract Acquisition Union Portal</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <span id="admin-badge" class="hidden bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs px-2.5 py-1 rounded-full font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-shield-halved text-xs"></i> Admin Mode
+                </span>
+                <button id="admin-toggle-btn" onclick="openAdminModal()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-200 px-3.5 py-2 rounded-lg font-medium transition flex items-center gap-2">
+                    <i class="fa-solid fa-lock"></i> Admin Login
+                </button>
+            </div>
+        </div>
+
+        <!-- SUB NAV TABS -->
+        <div class="bg-slate-800 border-t border-slate-700 px-4">
+            <div class="max-w-7xl mx-auto flex space-x-6 overflow-x-auto text-xs md:text-sm font-medium text-slate-400 py-1">
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active py-2 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
+                <button onclick="switchTab('buildings')" id="tab-buildings" class="tab-btn py-2 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-city"></i> Building Audit (0/242)</button>
+                <button onclick="switchTab('roadmap')" id="tab-roadmap" class="tab-btn py-2 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-route"></i> 7/12 Roadmap</button>
+                <button onclick="switchTab('readiness')" id="tab-readiness" class="tab-btn py-2 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-folder-open"></i> Doc Readiness (0%)</button>
+                <button onclick="switchTab('notices')" id="tab-notices" class="tab-btn py-2 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-bullhorn"></i> Notices & Updates</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- DASHBOARD SECTION -->
+        <section id="section-dashboard" class="space-y-6">
+            <!-- BANNER -->
+            <div class="bg-gradient-to-r from-blue-900 via-slate-900 to-indigo-950 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl space-y-3">
+                    <span class="bg-blue-500/20 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full border border-blue-400/30">
+                        <i class="fa-solid fa-landmark mr-1"></i> Joint Legal Initiative: B20, B21, B22, C23 & B24
+                    </span>
+                    <h2 class="text-2xl md:text-4xl font-extrabold leading-tight">Securing 7/12 Land Ownership Rights & Deemed Conveyance</h2>
+                    <p class="text-slate-300 text-sm md:text-base">
+                        Unified action portal across 5 buildings and 242 units of RNA Broadway Avenue II CHSL to execute Deemed Conveyance and mutate property cards in revenue records.
+                    </p>
+                </div>
+            </div>
+
+            <!-- KEY STATS GRID -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase text-slate-500">Total Union Units</span>
+                        <div class="text-2xl md:text-3xl font-extrabold text-slate-900 mt-1">242</div>
+                    </div>
+                    <span class="text-xs text-slate-400 mt-2">B20, B21, B22, C23, B24</span>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase text-slate-500">Verified Index II</span>
+                        <div id="stat-verified-count" class="text-2xl md:text-3xl font-extrabold text-blue-600 mt-1">0 <span class="text-sm font-normal text-slate-400">(0%)</span></div>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 mt-2">
+                        <div id="stat-verified-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase text-slate-500">Current Phase</span>
+                        <div class="text-lg md:text-xl font-bold text-amber-600 mt-1">Phase 1: Legal Formation</div>
+                    </div>
+                    <span class="text-xs text-amber-600/80 font-medium mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-spinner animate-spin"></i> Active Joint Phase
+                    </span>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase text-slate-500">Doc Readiness</span>
+                        <div id="stat-readiness-percent" class="text-2xl md:text-3xl font-extrabold text-slate-900 mt-1">0%</div>
+                    </div>
+                    <span class="text-xs text-slate-400 mt-2">Checklist items verified</span>
+                </div>
+            </div>
+
+            <!-- MILESTONES TIMELINE -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> Legal Milestones
+                    </h3>
+                    <span class="text-xs text-slate-500">Updated for 2026 Legal Drive</span>
+                </div>
+
+                <div class="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-slate-200">
+
+                    <!-- Milestone 1: Jun 2026 (Green) -->
+                    <div class="relative flex items-start space-x-4 pl-2">
+                        <div class="w-4 h-4 rounded-full bg-emerald-500 border-4 border-white shadow-md z-10 mt-1"></div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex-grow">
+                            <div class="flex flex-wrap justify-between items-center gap-2">
+                                <h4 class="font-bold text-sm text-slate-900">Joint General Body Resolution Passed</h4>
+                                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Jun 2026</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">All 5 wing societies convened jointly to execute mandated resolution authorizing legal action for Deemed Conveyance & 7/12 Extract application.</p>
+                        </div>
+                    </div>
+
+                    <!-- Milestone 2: Upcoming Phase (Orange) -->
+                    <div class="relative flex items-start space-x-4 pl-2">
+                        <div class="w-4 h-4 rounded-full bg-amber-500 border-4 border-white shadow-md z-10 mt-1"></div>
+                        <div class="bg-amber-50/50 border border-amber-200 rounded-lg p-4 flex-grow">
+                            <div class="flex flex-wrap justify-between items-center gap-2">
+                                <h4 class="font-bold text-sm text-slate-900">Statutory Legal Notices Served to Developer & Builder</h4>
+                                <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Upcoming Phase</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1">Serving formal legal notice to developer for failure to execute conveyance deed within statutory 4-month timeline under MOFA Act.</p>
+                        </div>
+                    </div>
+
+                    <!-- Milestone 3: Target Jan 2027 (Grey) -->
+                    <div class="relative flex items-start space-x-4 pl-2">
+                        <div class="w-4 h-4 rounded-full bg-slate-400 border-4 border-white shadow-md z-10 mt-1"></div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex-grow">
+                            <div class="flex flex-wrap justify-between items-center gap-2">
+                                <h4 class="font-bold text-sm text-slate-700">Deemed Conveyance Order & 7/12 Mutation</h4>
+                                <span class="bg-slate-200 text-slate-700 text-xs font-bold px-2.5 py-0.5 rounded-full">Target Jan 2027</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Final hearing at Competent Authority / District Deputy Registrar office, issuance of unilateral conveyance certificate, and revenue entry on 7/12 land card.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- BUILDING AUDIT SECTION -->
+        <section id="section-buildings" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Building-Wise Unit Audit Status</h3>
+                        <p class="text-xs text-slate-500">Verification of Index II, Sale Deeds, and Occupancy details per building block (Total 242 Units)</p>
+                    </div>
+                    <span id="total-verified-badge" class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full">
+                        0 / 242 Verified (0%)
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="building-cards-container">
+                    <!-- Cards will be dynamically filled / rendered -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ROADMAP SECTION -->
+        <section id="section-roadmap" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="mb-6">
+                    <h3 class="text-lg font-bold text-slate-900">7/12 Acquisition & Deemed Conveyance Roadmap</h3>
+                    <p class="text-xs text-slate-500">6-Step Statutory Framework under MOFA & Maharashtra Revenue Department Regulations</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="roadmap-container">
+                    <!-- Roadmap steps rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- DOCUMENT READINESS SECTION -->
+        <section id="section-readiness" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex flex-wrap justify-between items-center mb-6 gap-2">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Legal Document Readiness Checklist</h3>
+                        <p class="text-xs text-slate-500">Mandatory documentation required for submission to DDR Competent Authority</p>
+                    </div>
+                    <div class="text-right">
+                        <span id="readiness-score" class="text-lg font-extrabold text-blue-600">0%</span>
+                        <p class="text-xs text-slate-400">Total Preparedness</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3" id="doc-checklist-container">
+                    <!-- Document checklist rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- NOTICES & UPDATES SECTION -->
+        <section id="section-notices" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Union Public Notices & Circulars</h3>
+                        <p class="text-xs text-slate-500">Official legal updates broadcast to all building members</p>
+                    </div>
+                    <button id="add-notice-btn" onclick="openAddNoticeModal()" class="hidden bg-blue-600 hover:bg-blue-700 text-white text-xs px-3.5 py-2 rounded-lg font-medium transition flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Post Notice
+                    </button>
+                </div>
+
+                <div class="space-y-4" id="notices-container">
+                    <div class="border-l-4 border-blue-600 bg-slate-50 p-4 rounded-r-lg">
+                        <div class="flex justify-between items-center text-xs text-slate-500 mb-1">
+                            <span class="font-bold text-blue-800">UNIFORM CIRCULAR</span>
+                            <span>June 2026</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-900">Initiation of Joint Legal Drive for RNA Broadway Avenue II</h4>
+                        <p class="text-xs text-slate-600 mt-1">All flat owners across buildings C23, B24, B22, B21, and B20 are requested to submit copies of Index II and Sale Deeds to their respective building wing representatives for auditing.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-8">
+        <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <p class="font-bold text-white">RNA Broadway Avenue II CHSL Joint Legal Union</p>
+                <p class="text-slate-500 mt-0.5">Buildings: C23 (38) | B24 (51) | B22 (51) | B21 (51) | B20 (51) — Total 242 Units</p>
+            </div>
+            <div class="text-right">
+                <p>&copy; 2026 Legal Rights & Conveyance Drive.</p>
+                <p class="text-slate-500">Authorized for Internal Member Circulation</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ADMIN MODAL -->
+    <div id="admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-blue-600"></i> Admin Access Authentication
+                </h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-slate-500">Enter authorized password to toggle member verification numbers, document statuses, and broadcast legal notices.</p>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Passcode</label>
+                <input type="password" id="admin-password-input" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter password">
+            </div>
+            <p id="admin-error-msg" class="text-xs text-red-600 hidden font-medium">Incorrect password. Please try again.</p>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeAdminModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg">Cancel</button>
+                <button onclick="verifyAdminPassword()" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg">Authenticate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        // CORE APPLICATION STATE - Configured per instructions
+        let isAdmin = false;
+
+        const buildingData = [
+            { id: 'C23', name: 'Building C23', total: 38, verified: 0 },
+            { id: 'B24', name: 'Building B24', total: 51, verified: 0 },
+            { id: 'B22', name: 'Building B22', total: 51, verified: 0 },
+            { id: 'B21', name: 'Building B21', total: 51, verified: 0 },
+            { id: 'B20', name: 'Building B20', total: 51, verified: 0 }
+        ];
+
+        const roadmapSteps = [
+            { step: 1, title: 'Joint GB Resolution & Legal Committee Formation', desc: 'Passing resolution across all 5 wings and forming joint executive team.', status: 'Current Phase' },
+            { step: 2, title: 'Title Search & Revenue Land Record Collection', desc: 'Procuring 7/12 extract, city survey maps, and search report for 30 years.', status: 'Upcoming' },
+            { step: 3, title: 'Architect & Layout Plan Certification', desc: 'Obtaining certified copy of approved plan and layout from Municipal Authority.', status: 'Upcoming' },
+            { step: 4, title: 'Statutory Legal Notice to Promoter/Developer', desc: 'Serving 15-day legal notice requiring execution of conveyance deed under MOFA.', status: 'Upcoming' },
+            { step: 5, title: 'Submission of Application to DDR / Competent Authority', desc: 'Filing formal Deemed Conveyance petition before District Deputy Registrar.', status: 'Upcoming' },
+            { step: 6, title: 'Deemed Conveyance Order & Revenue Mutation (7/12)', desc: 'Obtaining unilateral order and updating society name on 7/12 land records.', status: 'Upcoming' }
+        ];
+
+        const docChecklist = [
+            { id: 'doc1', title: 'Registered Sale Deed / Agreement for Sale (All Flat Owners)', checked: false },
+            { id: 'doc2', title: 'Index II Copies for minimum 60% Member Strength', checked: false },
+            { id: 'doc3', title: 'Society Registration Certificates (B20, B21, B22, C23, B24)', checked: false },
+            { id: 'doc4', title: 'Property Tax Receipts / N.A. Assessment Receipts', checked: false },
+            { id: 'doc5', title: 'Approved Building Plan & Layout Copy', checked: false },
+            { id: 'doc6', title: '7/12 Extract & CTS Extract Copies', checked: false }
+        ];
+
+        // RENDER FUNCTIONS
+        function renderBuildings() {
+            const container = document.getElementById('building-cards-container');
+            container.innerHTML = '';
+            
+            let totalUnits = 0;
+            let totalVerified = 0;
+
+            buildingData.forEach((b, index) => {
+                totalUnits += b.total;
+                totalVerified += b.verified;
+                const percent = Math.round((b.verified / b.total) * 100);
+
+                const card = document.createElement('div');
+                card.className = "border border-slate-200 rounded-xl p-5 bg-white shadow-sm flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-base text-slate-900">${b.name}</h4>
+                            <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">${b.total} Units</span>
+                        </div>
+                        <div class="text-sm font-semibold text-slate-600 mb-1">
+                            Verified Index II: <span class="text-blue-600 font-bold">${b.verified}</span> / ${b.total}
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 my-3">
+                            <div class="bg-blue-600 h-2.5 rounded-full transition-all" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                    ${isAdmin ? `
+                        <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-500">Update Verified:</span>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="updateBuildingCount(${index}, -1)" class="w-7 h-7 rounded bg-slate-100 hover:bg-slate-200 font-bold text-slate-700 text-xs">-</button>
+                                <span class="text-xs font-bold">${b.verified}</span>
+                                <button onclick="updateBuildingCount(${index}, 1)" class="w-7 h-7 rounded bg-blue-600 hover:bg-blue-700 font-bold text-white text-xs">+</button>
+                            </div>
+                        </div>
+                    ` : ''}
+                `;
+                container.appendChild(card);
+            });
+
+            // Update Header/Stats
+            const overallPercent = Math.round((totalVerified / totalUnits) * 100);
+            document.getElementById('stat-verified-count').innerHTML = `${totalVerified} <span class="text-sm font-normal text-slate-400">(${overallPercent}%)</span>`;
+            document.getElementById('stat-verified-bar').style.width = `${overallPercent}%`;
+            document.getElementById('total-verified-badge').innerText = `${totalVerified} / ${totalUnits} Verified (${overallPercent}%)`;
+            document.getElementById('tab-buildings').innerHTML = `<i class="fa-solid fa-city"></i> Building Audit (${totalVerified}/${totalUnits})`;
+        }
+
+        function renderRoadmap() {
+            const container = document.getElementById('roadmap-container');
+            container.innerHTML = '';
+
+            roadmapSteps.forEach((s) => {
+                const isCurrent = s.status === 'Current Phase';
+                const card = document.createElement('div');
+                card.className = `p-5 rounded-xl border ${isCurrent ? 'border-amber-400 bg-amber-50/40 shadow-sm' : 'border-slate-200 bg-white'}`;
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="w-7 h-7 rounded-full ${isCurrent ? 'bg-amber-500 text-white' : 'bg-slate-200 text-slate-700'} font-bold text-xs flex items-center justify-center">
+                            0${s.step}
+                        </span>
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${isCurrent ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-600'}">
+                            ${s.status}
+                        </span>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-900 mb-1">${s.title}</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">${s.desc}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById('doc-checklist-container');
+            container.innerHTML = '';
+
+            let checkedCount = 0;
+
+            docChecklist.forEach((doc, idx) => {
+                if (doc.checked) checkedCount++;
+
+                const item = document.createElement('div');
+                item.className = "p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between";
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" ${doc.checked ? 'checked' : ''} ${!isAdmin ? 'disabled' : ''} 
+                            onchange="toggleDocCheck(${idx})" 
+                            class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                        <span class="text-xs md:text-sm font-medium ${doc.checked ? 'text-slate-900 font-bold' : 'text-slate-600'}">${doc.title}</span>
+                    </div>
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${doc.checked ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'}">
+                        ${doc.checked ? 'Verified Ready' : 'Pending'}
+                    </span>
+                `;
+                container.appendChild(item);
+            });
+
+            const percent = Math.round((checkedCount / docChecklist.length) * 100);
+            document.getElementById('readiness-score').innerText = `${percent}%`;
+            document.getElementById('stat-readiness-percent').innerText = `${percent}%`;
+            document.getElementById('tab-readiness').innerHTML = `<i class="fa-solid fa-folder-open"></i> Doc Readiness (${percent}%)`;
+        }
+
+        // ACTIONS
+        function updateBuildingCount(index, change) {
+            if (!isAdmin) return;
+            const b = buildingData[index];
+            const newVal = b.verified + change;
+            if (newVal >= 0 && newVal <= b.total) {
+                b.verified = newVal;
+                renderBuildings();
+            }
+        }
+
+        function toggleDocCheck(index) {
+            if (!isAdmin) return;
+            docChecklist[index].checked = !docChecklist[index].checked;
+            renderChecklist();
+        }
+
+        // NAVIGATION TABS
+        function switchTab(tabId) {
+            ['dashboard', 'buildings', 'roadmap', 'readiness', 'notices'].forEach(id => {
+                document.getElementById(`section-${id}`).classList.add('hidden');
+                document.getElementById(`tab-${id}`).classList.remove('active');
+            });
+
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // ADMIN MODAL LOGIC
+        function openAdminModal() {
+            if (isAdmin) {
+                isAdmin = false;
+                document.getElementById('admin-badge').classList.add('hidden');
+                document.getElementById('add-notice-btn').classList.add('hidden');
+                document.getElementById('admin-toggle-btn').innerHTML = `<i class="fa-solid fa-lock"></i> Admin Login`;
+                renderBuildings();
+                renderChecklist();
+                return;
+            }
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-password-input').value = '';
+            document.getElementById('admin-error-msg').classList.add('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function verifyAdminPassword() {
+            const pwd = document.getElementById('admin-password-input').value;
+            if (pwd === 'anismemon27') {
+                isAdmin = true;
+                closeAdminModal();
+                document.getElementById('admin-badge').classList.remove('hidden');
+                document.getElementById('add-notice-btn').classList.remove('hidden');
+                document.getElementById('admin-toggle-btn').innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> Logout Admin`;
+                renderBuildings();
+                renderChecklist();
+            } else {
+                document.getElementById('admin-error-msg').classList.remove('hidden');
+            }
+        }
+
+        // INITIALIZATION
+        window.onload = function() {
+            renderBuildings();
+            renderRoadmap();
+            renderChecklist();
+        };
+    </script>
+</body>
+</html>
