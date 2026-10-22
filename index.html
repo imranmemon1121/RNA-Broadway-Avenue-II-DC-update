@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNA Broadway Avenue II - Deemed Conveyance & 7/12 Union Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-btn.active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 700; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
+
+    <!-- TOP HEADER / NAV -->
+    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 p-2.5 rounded-lg text-white shadow-lg shadow-blue-600/30">
+                    <i class="fa-solid font-bold text-xl fa-building-user"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg md:text-xl font-bold tracking-tight text-white leading-tight">RNA Broadway Avenue II</h1>
+                        <!-- Live Cloud DB Status Indicator -->
+                        <span id="cloud-status-badge" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Live Cloud
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-medium">Deemed Conveyance & 7/12 Extract Acquisition Union Portal</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Unsaved Changes Badge -->
+                <span id="unsaved-badge" class="hidden bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs px-2.5 py-1 rounded-full font-semibold flex items-center gap-1.5 animate-bounce">
+                    <i class="fa-solid fa-circle-exclamation text-amber-400"></i> Unsaved Changes
+                </span>
+
+                <!-- Save To Cloud Button (Admin Only) -->
+                <button id="save-cloud-btn" onclick="saveAllToCloud()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3.5 py-2 rounded-lg font-bold transition flex items-center gap-2 shadow-md">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Save to Cloud
+                </button>
+
+                <!-- Admin Status Badge -->
+                <span id="admin-badge" class="hidden bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs px-2.5 py-1 rounded-full font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-shield-halved text-xs"></i> Admin Mode
+                </span>
+                <button id="admin-toggle-btn" onclick="handleAdminBtnClick()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-200 px-3.5 py-2 rounded-lg font-medium transition flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-lock" id="admin-btn-icon"></i> <span id="admin-btn-text">Admin Login</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SUB NAV TABS -->
+        <div class="bg-slate-800 border-t border-slate-700 px-4">
+            <div class="max-w-7xl mx-auto flex space-x-6 overflow-x-auto text-xs md:text-sm font-medium text-slate-400 py-1">
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active py-2 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
+                <button onclick="switchTab('buildings')" id="tab-buildings" class="tab-btn py-2 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-city"></i> Building Audit (<span id="tab-verified-count">0</span>/242)</button>
+                <button onclick="switchTab('roadmap')" id="tab-roadmap" class="tab-btn py-2 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-route"></i> 8-Step 7/12 Roadmap</button>
+                <button onclick="switchTab('readiness')" id="tab-readiness" class="tab-btn py-2 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-folder-open"></i> Doc Readiness (<span id="tab-readiness-count">0%</span>)</button>
+                <button onclick="switchTab('notices')" id="tab-notices" class="tab-btn py-2 flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-bullhorn"></i> Notices & Updates</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- DASHBOARD SECTION -->
+        <section id="section-dashboard" class="space-y-6">
+            <!-- BANNER -->
+            <div class="bg-gradient-to-r from-blue-900 via-slate-900 to-indigo-950 text-white rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-white pointer-events-none">
+                    <i class="fa-solid fa-landmark text-9xl"></i>
+                </div>
+                <div class="relative z-10 max-w-3xl space-y-3">
+                    <span class="bg-blue-500/20 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full border border-blue-400/30 inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-landmark text-xs"></i> Joint Legal Initiative: C23, B24, B22, B21 & B20
+                    </span>
+                    <h2 class="text-2xl md:text-4xl font-extrabold leading-tight">Securing 7/12 Land Ownership Rights & Deemed Conveyance</h2>
+                    <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                        Unified action portal across 5 buildings and 242 units of RNA Broadway Avenue II CHSL to execute statutory Deemed Conveyance and mutate property cards in revenue records.
+                    </p>
+                </div>
+            </div>
+
+            <!-- KEY STATS GRID -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase text-slate-500">Total Union Units</span>
+                        <div class="text-2xl md:text-3xl font-extrabold text-slate-900 mt-1">242</div>
+                    </div>
+                    <span class="text-xs text-slate-400 mt-2">C23, B24, B22, B21, B20</span>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase text-slate-500">Verified Index II</span>
+                        <div id="stat-verified-count" class="text-2xl md:text-3xl font-extrabold text-blue-600 mt-1">
+                            0 <span class="text-sm font-normal text-slate-400">(0%)</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
+                        <div id="stat-verified-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase text-slate-500">Active Stage</span>
+                        <div id="stat-current-stage" class="text-sm md:text-base font-bold text-amber-600 mt-1 truncate">Step 1: Society Consent</div>
+                    </div>
+                    <span class="text-xs text-amber-600/90 font-medium mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-spinner animate-spin text-xs"></i> Active Progress Phase
+                    </span>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase text-slate-500">Doc Readiness</span>
+                        <div id="stat-readiness-percent" class="text-2xl md:text-3xl font-extrabold text-slate-900 mt-1">0%</div>
+                    </div>
+                    <span class="text-xs text-slate-400 mt-2">Checklist verified</span>
+                </div>
+            </div>
+
+            <!-- DASHBOARD ROADMAP SUMMARY -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-route text-blue-600"></i> Legal Statutory Roadmap Highlights
+                    </h3>
+                    <button onclick="switchTab('roadmap')" class="text-xs font-bold text-blue-600 hover:text-blue-800 transition flex items-center gap-1">
+                        View Full 8 Steps <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="dashboard-roadmap-summary">
+                    <!-- Top 2-3 Active Steps rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- BUILDING AUDIT SECTION -->
+        <section id="section-buildings" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Building-Wise Unit Audit Status</h3>
+                        <p class="text-xs text-slate-500">Verification of Index II, Sale Deeds, and Occupancy details across 5 wing societies (Total 242 Units)</p>
+                    </div>
+                    <span id="total-verified-badge" class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full">
+                        0 / 242 Verified (0%)
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="building-cards-container">
+                    <!-- Dynamic Building Cards -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ROADMAP SECTION (8 DETAILED STEPS) -->
+        <section id="section-roadmap" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex flex-wrap justify-between items-center mb-6 gap-2">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">8-Step Statutory 7/12 & Deemed Conveyance Roadmap</h3>
+                        <p class="text-xs text-slate-500">Comprehensive legal timeline under MOFA & Maharashtra Revenue Department Regulations</p>
+                    </div>
+                    <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                        Target Timeline: 6-9 Months
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4" id="roadmap-container">
+                    <!-- 8 Roadmap Cards -->
+                </div>
+            </div>
+        </section>
+
+        <!-- DOCUMENT READINESS SECTION -->
+        <section id="section-readiness" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex flex-wrap justify-between items-center mb-6 gap-2">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Legal Document Readiness Checklist</h3>
+                        <p class="text-xs text-slate-500">Mandatory documentation required for submission to DDR Competent Authority</p>
+                    </div>
+                    <div class="text-right">
+                        <span id="readiness-score" class="text-lg font-extrabold text-blue-600">0%</span>
+                        <p class="text-xs text-slate-400">Total Preparedness</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3" id="doc-checklist-container">
+                    <!-- Dynamic Document Checklist -->
+                </div>
+            </div>
+        </section>
+
+        <!-- NOTICES & UPDATES SECTION -->
+        <section id="section-notices" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Union Public Notices & Circulars</h3>
+                        <p class="text-xs text-slate-500">Official legal updates broadcast to all building members</p>
+                    </div>
+                    <button id="add-notice-btn" onclick="openAddNoticeModal()" class="hidden bg-blue-600 hover:bg-blue-700 text-white text-xs px-3.5 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-plus text-xs"></i> Post Notice
+                    </button>
+                </div>
+
+                <div class="space-y-4" id="notices-container">
+                    <!-- Dynamic Notices -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-8">
+        <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <p class="font-bold text-white">RNA Broadway Avenue II CHSL Joint Legal Union</p>
+                <p class="text-slate-500 mt-0.5">Buildings: C23 (38) | B24 (51) | B22 (51) | B21 (51) | B20 (51) — Total 242 Units</p>
+            </div>
+            <div class="text-right">
+                <p>&copy; 2026 Legal Rights & Conveyance Drive.</p>
+                <p class="text-slate-500 flex items-center gap-1 justify-end mt-0.5">
+                    <i class="fa-solid fa-cloud text-blue-400"></i> Cloud Synced via Firestore
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ADMIN MODAL -->
+    <div id="admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-100">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-blue-600"></i> Admin Access Authentication
+                </h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-slate-500 leading-relaxed">
+                Log in as administrator (<span class="font-semibold text-slate-700">memonanis27@gmail.com</span>) to modify verification counts, change roadmap step status, update doc readiness, and publish notices.
+            </p>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Admin Passcode</label>
+                <input type="password" id="admin-password-input" onkeyup="if(event.key==='Enter') verifyAdminPassword()" class="w-full border border-slate-300 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="Enter passcode">
+            </div>
+            <p id="admin-error-msg" class="text-xs text-red-600 hidden font-medium flex items-center gap-1">
+                <i class="fa-solid fa-circle-exclamation"></i> <span id="admin-error-text">Incorrect password. Please try again.</span>
+            </p>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeAdminModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition">Cancel</button>
+                <button onclick="verifyAdminPassword()" id="auth-submit-btn" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition flex items-center gap-1.5">
+                    <span>Authenticate</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- POST NOTICE MODAL -->
+    <div id="notice-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-bullhorn text-blue-600"></i> Post New Public Notice
+                </h3>
+                <button onclick="closeNoticeModal()" class="text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Notice Category Tag</label>
+                    <input type="text" id="notice-category-input" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500" placeholder="e.g. UNIFORM CIRCULAR, LEGAL UPDATE, GB MEETING">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Date / Month Tag</label>
+                    <input type="text" id="notice-date-input" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500" placeholder="e.g. June 2026, Oct 2026">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Notice Title</label>
+                    <input type="text" id="notice-title-input" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-blue-500" placeholder="Enter headline title...">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Detailed Content</label>
+                    <textarea id="notice-content-input" rows="4" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500" placeholder="Write full notice details for all building members..."></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 pt-2 border-t">
+                <button onclick="closeNoticeModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition">Cancel</button>
+                <button onclick="submitNotice()" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-paper-plane text-xs"></i> Broadcast Notice
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE INTEGRATION & APPLICATION LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            onSnapshot, 
+            collection, 
+            addDoc, 
+            deleteDoc 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Environment Variables provided by platform
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'rna-broadway-conveyance';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "AIzaSyDemoPlaceholderConfigKeyRNA2026",
+                authDomain: "rna-broadway-app.firebaseapp.com",
+                projectId: "rna-broadway-app",
+                storageBucket: "rna-broadway-app.appspot.com",
+                messagingSenderId: "1234567890",
+                appId: "1:1234567890:web:rna12345"
+            };
+
+        // Initialize Firebase SDK
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Firestore Paths (Strict Rule Compliance)
+        const PUBLIC_DATA_PATH = ['artifacts', appId, 'public', 'data'];
+        
+        // Document References
+        const buildingsDocRef = doc(db, ...PUBLIC_DATA_PATH, 'building_data', 'summary');
+        const docsChecklistDocRef = doc(db, ...PUBLIC_DATA_PATH, 'doc_checklist', 'summary');
+        const roadmapDocRef = doc(db, ...PUBLIC_DATA_PATH, 'roadmap_data', 'summary');
+        const noticesCollectionRef = collection(db, ...PUBLIC_DATA_PATH, 'notices');
+
+        // APP STATE
+        let isAdmin = false;
+        let authUser = null;
+        let hasUnsavedChanges = false;
+
+        // Default Initial Datasets
+        const defaultBuildingData = [
+            { id: 'C23', name: 'Building C23', total: 38, verified: 0 },
+            { id: 'B24', name: 'Building B24', total: 51, verified: 0 },
+            { id: 'B22', name: 'Building B22', total: 51, verified: 0 },
+            { id: 'B21', name: 'Building B21', total: 51, verified: 0 },
+            { id: 'B20', name: 'Building B20', total: 51, verified: 0 }
+        ];
+
+        // 8-Step Detailed Roadmap Default Data
+        const defaultRoadmapSteps = [
+            {
+                step: 1,
+                title: "1. Society Consent & Legal Notice",
+                procedure: "The society holds a General Body Meeting to pass a resolution (requiring a 2/3rd majority). A formal legal notice is sent via registered post to the developer to execute conveyance.",
+                duration: "15 to 30 days",
+                notes: "If the builder fails to convey the property within 4 months of the society's incorporation, the society becomes legally eligible to apply.",
+                status: "Current in Progress"
+            },
+            {
+                step: 2,
+                title: "2. Document Collection & Assembly",
+                procedure: "The society compiles necessary documentation. Note that recent directives have vastly simplified this, requiring fewer core documents compared to the historical 27.",
+                duration: "30 to 45 days",
+                notes: "Delays here depend on how quickly the society can gather individual member Index II documents, building layout plans, and property records.",
+                status: "Upcoming"
+            },
+            {
+                step: 3,
+                title: "3. Online Filing & Application Scrutiny",
+                procedure: "The society files the formal application (Form VII) through the MahaSahakar Pratya Portal. The Competent Authority—the District Deputy Registrar (DDR)—reviews the application.",
+                duration: "30 days (Max)",
+                notes: "The DDR's office is required to issue a Scrutiny Report (Form VIII) or accept the case within one month of submittal.",
+                status: "Upcoming"
+            },
+            {
+                step: 4,
+                title: "4. Summons, Public Notice & Hearings",
+                procedure: "The DDR issues formal summons to the builder/landowners. Concurrently, a public notice is published in local newspapers to check for third-party objections.",
+                duration: "3 to 4 months",
+                notes: "The public notice normally carries a 60-day window for public objections. Streamlined rules cap active hearings to a maximum of 3 sessions, typically spaced one month apart.",
+                status: "Upcoming"
+            },
+            {
+                step: 5,
+                title: "5. Passing of the Final Order",
+                procedure: "Once the hearings finish and arguments are documented, the DDR evaluates the case merit and drafts the official Deemed Conveyance Order.",
+                duration: "30 days",
+                notes: "Legally, the DDR must pass the final order and issue the certificate within 1 month of the concluding hearing. The overarching target for Steps 3 through 5 is capped at 6 months.",
+                status: "Upcoming"
+            },
+            {
+                step: 6,
+                title: "6. Stamp Duty Adjudication",
+                procedure: "The society drafts the Conveyance Deed. It is submitted to the local Collector of Stamps to evaluate and adjudicate structural stamp duty liabilities.",
+                duration: "45 days (Max)",
+                notes: "The Collector of Stamps must legally finalize the assessment within 45 days. If individual owners paid stamp duty during flat purchase, a nominal duty of ₹100 per flat applies.",
+                status: "Upcoming"
+            },
+            {
+                step: 7,
+                title: "7. Final Signature & Registration",
+                procedure: "The DDR signs the deed on behalf of the non-cooperative builder. The society executives execute and register the deed at the Sub-Registrar of Assurances.",
+                duration: "15 to 30 days",
+                notes: "Once the Collector's payment confirmation letter is issued (typically within 10 days), the registration is finalized in a single day at the sub-registrar office.",
+                status: "Upcoming"
+            },
+            {
+                step: 8,
+                title: "8. Revenue Mutation (Property Card)",
+                procedure: "The society applies to the City Survey Office or Tahsildar to update the public property records.",
+                duration: "30 to 60 days",
+                notes: "The local revenue department runs a mutation process to formally replace the builder's name with the Co-operative Housing Society's name on the Property Card or 7/12 extract.",
+                status: "Upcoming"
+            }
+        ];
+
+        const defaultDocChecklist = [
+            { id: 'doc1', title: 'Registered Sale Deed / Agreement for Sale (All Flat Owners)', checked: false },
+            { id: 'doc2', title: 'Index II Copies for minimum 60% Member Strength', checked: false },
+            { id: 'doc3', title: 'Society Registration Certificates (C23, B24, B22, B21, B20)', checked: false },
+            { id: 'doc4', title: 'Property Tax Receipts / N.A. Assessment Receipts', checked: false },
+            { id: 'doc5', title: 'Approved Building Plan & Layout Copy', checked: false },
+            { id: 'doc6', title: '7/12 Extract & CTS Extract Copies', checked: false }
+        ];
+
+        const defaultInitialNotices = [
+            {
+                category: 'UNIFORM CIRCULAR',
+                date: 'June 2026',
+                title: 'Initiation of Joint Legal Drive for RNA Broadway Avenue II',
+                content: 'All flat owners across buildings C23, B24, B22, B21, and B20 are requested to submit copies of Index II and Sale Deeds to their respective building wing representatives for legal auditing.',
+                timestamp: Date.now()
+            }
+        ];
+
+        // Local Memory State
+        let currentBuildingData = JSON.parse(JSON.stringify(defaultBuildingData));
+        let currentRoadmapSteps = JSON.parse(JSON.stringify(defaultRoadmapSteps));
+        let currentDocChecklist = JSON.parse(JSON.stringify(defaultDocChecklist));
+        let currentNotices = [];
+
+        // INITIALIZE AUTHENTICATION & LISTENERS
+        async function initApp() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.warn("Auth initialization fallback:", err);
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                authUser = user;
+                if (user) {
+                    setupRealtimeListeners();
+                }
+            });
+        }
+
+        // REAL-TIME FIRESTORE LISTENERS
+        function setupRealtimeListeners() {
+            // 1. Buildings Listener
+            onSnapshot(buildingsDocRef, (snap) => {
+                if (snap.exists()) {
+                    currentBuildingData = snap.data().items || defaultBuildingData;
+                } else {
+                    setDoc(buildingsDocRef, { items: defaultBuildingData });
+                    currentBuildingData = defaultBuildingData;
+                }
+                renderBuildings();
+            }, (error) => console.error("Buildings listener error:", error));
+
+            // 2. Roadmap Steps Listener
+            onSnapshot(roadmapDocRef, (snap) => {
+                if (snap.exists()) {
+                    currentRoadmapSteps = snap.data().items || defaultRoadmapSteps;
+                } else {
+                    setDoc(roadmapDocRef, { items: defaultRoadmapSteps });
+                    currentRoadmapSteps = defaultRoadmapSteps;
+                }
+                renderRoadmap();
+                updateDashboardStage();
+            }, (error) => console.error("Roadmap listener error:", error));
+
+            // 3. Checklist Listener
+            onSnapshot(docsChecklistDocRef, (snap) => {
+                if (snap.exists()) {
+                    currentDocChecklist = snap.data().items || defaultDocChecklist;
+                } else {
+                    setDoc(docsChecklistDocRef, { items: defaultDocChecklist });
+                    currentDocChecklist = defaultDocChecklist;
+                }
+                renderChecklist();
+            }, (error) => console.error("Checklist listener error:", error));
+
+            // 4. Notices Listener
+            onSnapshot(noticesCollectionRef, (snap) => {
+                currentNotices = [];
+                snap.forEach((docSnap) => {
+                    currentNotices.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                currentNotices.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                if (currentNotices.length === 0) {
+                    defaultInitialNotices.forEach(notice => {
+                        addDoc(noticesCollectionRef, notice);
+                    });
+                } else {
+                    renderNotices();
+                }
+            }, (error) => console.error("Notices listener error:", error));
+        }
+
+        // UNSAVED STATE MANAGEMENT
+        function markUnsaved() {
+            if (isAdmin) {
+                hasUnsavedChanges = true;
+                const badge = document.getElementById('unsaved-badge');
+                if (badge) badge.classList.remove('hidden');
+            }
+        }
+
+        function clearUnsaved() {
+            hasUnsavedChanges = false;
+            const badge = document.getElementById('unsaved-badge');
+            if (badge) badge.classList.add('hidden');
+        }
+
+        // SAVE ALL CHANGES TO CLOUD (ADMIN ONLY)
+        window.saveAllToCloud = async function() {
+            if (!isAdmin) return;
+            try {
+                const saveBtn = document.getElementById('save-cloud-btn');
+                saveBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
+
+                // Write all sets back to Firestore
+                await setDoc(buildingsDocRef, { items: currentBuildingData });
+                await setDoc(roadmapDocRef, { items: currentRoadmapSteps });
+                await setDoc(docsChecklistDocRef, { items: currentDocChecklist });
+
+                clearUnsaved();
+                showToast("All changes successfully saved to Live Cloud!", "success");
+                saveBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Save to Cloud`;
+            } catch (err) {
+                console.error("Error saving to cloud:", err);
+                showToast("Failed to save changes to cloud.", "error");
+                document.getElementById('save-cloud-btn').innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Save to Cloud`;
+            }
+        };
+
+        // RENDER FUNCTIONS
+        function renderBuildings() {
+            const container = document.getElementById('building-cards-container');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            let totalUnits = 0;
+            let totalVerified = 0;
+
+            currentBuildingData.forEach((b, index) => {
+                totalUnits += b.total;
+                totalVerified += b.verified;
+                const percent = Math.round((b.verified / b.total) * 100);
+
+                const card = document.createElement('div');
+                card.className = "border border-slate-200 rounded-xl p-5 bg-white shadow-sm hover:shadow-md transition flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-base text-slate-900">${b.name}</h4>
+                            <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">${b.total} Units</span>
+                        </div>
+                        <div class="text-sm font-semibold text-slate-600 mb-1">
+                            Verified Index II: <span class="text-blue-600 font-bold">${b.verified}</span> / ${b.total}
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 my-3 overflow-hidden">
+                            <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                    ${isAdmin ? `
+                        <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-500">Modify Verified Count:</span>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="window.updateBuildingCount(${index}, -1)" class="w-7 h-7 rounded bg-slate-100 hover:bg-slate-200 font-bold text-slate-700 text-xs transition border flex items-center justify-center">-</button>
+                                <span class="text-xs font-bold w-6 text-center">${b.verified}</span>
+                                <button onclick="window.updateBuildingCount(${index}, 1)" class="w-7 h-7 rounded bg-blue-600 hover:bg-blue-700 font-bold text-white text-xs transition flex items-center justify-center">+</button>
+                            </div>
+                        </div>
+                    ` : ''}
+                `;
+                container.appendChild(card);
+            });
+
+            const overallPercent = totalUnits > 0 ? Math.round((totalVerified / totalUnits) * 100) : 0;
+            document.getElementById('stat-verified-count').innerHTML = `${totalVerified} <span class="text-sm font-normal text-slate-400">(${overallPercent}%)</span>`;
+            document.getElementById('stat-verified-bar').style.width = `${overallPercent}%`;
+            document.getElementById('total-verified-badge').innerText = `${totalVerified} / ${totalUnits} Verified (${overallPercent}%)`;
+            document.getElementById('tab-verified-count').innerText = totalVerified;
+        }
+
+        function getStatusBadgeHTML(status) {
+            if (status === 'Completed') {
+                return `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold px-3 py-1 rounded-full inline-flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Completed</span>`;
+            } else if (status === 'Current in Progress') {
+                return `<span class="bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold px-3 py-1 rounded-full inline-flex items-center gap-1.5"><i class="fa-solid fa-spinner animate-spin text-amber-600"></i> Current in Progress</span>`;
+            } else {
+                return `<span class="bg-slate-100 text-slate-600 border border-slate-300 text-xs font-bold px-3 py-1 rounded-full inline-flex items-center gap-1.5"><i class="fa-regular fa-clock text-slate-400"></i> Upcoming</span>`;
+            }
+        }
+
+        function renderRoadmap() {
+            const container = document.getElementById('roadmap-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            currentRoadmapSteps.forEach((s, idx) => {
+                const isCurrent = s.status === 'Current in Progress';
+                const isCompleted = s.status === 'Completed';
+
+                let borderClass = 'border-slate-200 bg-white';
+                if (isCurrent) borderClass = 'border-amber-400 bg-amber-50/30 shadow-md';
+                if (isCompleted) borderClass = 'border-emerald-300 bg-emerald-50/20';
+
+                const card = document.createElement('div');
+                card.className = `p-5 md:p-6 rounded-2xl border ${borderClass} transition space-y-3`;
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap justify-between items-center gap-2">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-xl ${isCompleted ? 'bg-emerald-600' : isCurrent ? 'bg-amber-500' : 'bg-slate-800'} text-white font-extrabold text-sm flex items-center justify-center shadow-sm">
+                                ${s.step}
+                            </span>
+                            <h4 class="font-bold text-base md:text-lg text-slate-900">${s.title}</h4>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                            ${getStatusBadgeHTML(s.status)}
+                            ${isAdmin ? `
+                                <div class="relative inline-block">
+                                    <select onchange="window.updateRoadmapStatus(${idx}, this.value)" class="text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2.5 py-1.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                                        <option value="Current in Progress" ${s.status === 'Current in Progress' ? 'selected' : ''}>Current in Progress</option>
+                                        <option value="Completed" ${s.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                                        <option value="Upcoming" ${s.status === 'Upcoming' ? 'selected' : ''}>Upcoming</option>
+                                    </select>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+                        <div class="md:col-span-2 space-y-1">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Stage & Procedure</span>
+                            <p class="text-xs md:text-sm text-slate-700 leading-relaxed font-medium">${s.procedure}</p>
+                        </div>
+                        <div class="space-y-1 bg-slate-50/80 p-3 rounded-xl border border-slate-100">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                <i class="fa-regular fa-hourglass-half text-blue-500"></i> Duration
+                            </span>
+                            <p class="text-xs font-bold text-slate-800">${s.duration}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50/60 border border-blue-100 rounded-xl p-3 text-xs text-blue-950 flex items-start space-x-2">
+                        <i class="fa-solid fa-circle-info text-blue-600 mt-0.5 shrink-0"></i>
+                        <div>
+                            <span class="font-bold text-blue-900">Key Legal Mechanism / Notes:</span> ${s.notes}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            renderDashboardRoadmapSummary();
+        }
+
+        function renderDashboardRoadmapSummary() {
+            const summaryContainer = document.getElementById('dashboard-roadmap-summary');
+            if (!summaryContainer) return;
+            summaryContainer.innerHTML = '';
+
+            // Find current or completed steps for dashboard summary
+            const relevantSteps = currentRoadmapSteps.filter(s => s.status === 'Current in Progress' || s.status === 'Completed').slice(0, 2);
+            const displaySteps = relevantSteps.length > 0 ? relevantSteps : currentRoadmapSteps.slice(0, 2);
+
+            displaySteps.forEach(s => {
+                const card = document.createElement('div');
+                card.className = "p-4 border border-slate-200 bg-slate-50/50 rounded-xl space-y-2";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-xs text-slate-900">${s.title}</span>
+                        ${getStatusBadgeHTML(s.status)}
+                    </div>
+                    <p class="text-xs text-slate-600 line-clamp-2">${s.procedure}</p>
+                    <div class="text-[11px] text-slate-500 font-semibold"><i class="fa-regular fa-clock"></i> Duration: ${s.duration}</div>
+                `;
+                summaryContainer.appendChild(card);
+            });
+        }
+
+        function updateDashboardStage() {
+            const activeStep = currentRoadmapSteps.find(s => s.status === 'Current in Progress');
+            const targetEl = document.getElementById('stat-current-stage');
+            if (targetEl) {
+                if (activeStep) {
+                    targetEl.innerText = activeStep.title;
+                    targetEl.className = "text-sm md:text-base font-bold text-amber-600 mt-1 truncate";
+                } else {
+                    targetEl.innerText = "Targeting Initial Phase";
+                    targetEl.className = "text-sm md:text-base font-bold text-slate-700 mt-1 truncate";
+                }
+            }
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById('doc-checklist-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            let checkedCount = 0;
+
+            currentDocChecklist.forEach((docItem, idx) => {
+                if (docItem.checked) checkedCount++;
+
+                const item = document.createElement('div');
+                item.className = "p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between shadow-sm hover:border-slate-300 transition";
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" ${docItem.checked ? 'checked' : ''} ${!isAdmin ? 'disabled' : ''} 
+                            onchange="window.toggleDocCheck(${idx})" 
+                            class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 ${isAdmin ? 'cursor-pointer' : 'cursor-not-allowed'}">
+                        <span class="text-xs md:text-sm font-medium ${docItem.checked ? 'text-slate-900 font-bold' : 'text-slate-600'}">${docItem.title}</span>
+                    </div>
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${docItem.checked ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'}">
+                        ${docItem.checked ? '<i class="fa-solid fa-check text-[10px] mr-1"></i> Verified Ready' : 'Pending'}
+                    </span>
+                `;
+                container.appendChild(item);
+            });
+
+            const percent = currentDocChecklist.length > 0 ? Math.round((checkedCount / currentDocChecklist.length) * 100) : 0;
+            document.getElementById('readiness-score').innerText = `${percent}%`;
+            document.getElementById('stat-readiness-percent').innerText = `${percent}%`;
+            document.getElementById('tab-readiness-count').innerText = `${percent}%`;
+        }
+
+        function renderNotices() {
+            const container = document.getElementById('notices-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (currentNotices.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400 text-xs">
+                        <i class="fa-solid fa-folder-open text-2xl mb-2"></i>
+                        <p>No public notices published yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            currentNotices.forEach((notice) => {
+                const card = document.createElement('div');
+                card.className = "border-l-4 border-blue-600 bg-slate-50 p-4 rounded-r-lg shadow-sm space-y-2 relative group";
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-xs text-slate-500">
+                        <span class="font-bold text-blue-800 bg-blue-100/70 px-2 py-0.5 rounded">${notice.category || 'NOTICE'}</span>
+                        <div class="flex items-center gap-3">
+                            <span>${notice.date || ''}</span>
+                            ${isAdmin ? `
+                                <button onclick="window.deleteNotice('${notice.id}')" class="text-red-500 hover:text-red-700 transition font-medium text-xs" title="Delete Notice">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-900">${notice.title}</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">${notice.content}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // EDIT ACTIONS (ADMIN LOCAL MUTATIONS WITH UNSAVED FLAG)
+        window.updateBuildingCount = function(index, change) {
+            if (!isAdmin) return;
+            const updated = [...currentBuildingData];
+            const b = updated[index];
+            const newVal = b.verified + change;
+            
+            if (newVal >= 0 && newVal <= b.total) {
+                b.verified = newVal;
+                currentBuildingData = updated;
+                renderBuildings();
+                markUnsaved();
+            }
+        };
+
+        window.updateRoadmapStatus = function(index, newStatus) {
+            if (!isAdmin) return;
+            currentRoadmapSteps[index].status = newStatus;
+            renderRoadmap();
+            updateDashboardStage();
+            markUnsaved();
+        };
+
+        window.toggleDocCheck = function(index) {
+            if (!isAdmin) return;
+            currentDocChecklist[index].checked = !currentDocChecklist[index].checked;
+            renderChecklist();
+            markUnsaved();
+        };
+
+        window.submitNotice = async function() {
+            if (!isAdmin) return;
+            const cat = document.getElementById('notice-category-input').value.trim() || 'NOTICE';
+            const dateStr = document.getElementById('notice-date-input').value.trim() || '2026';
+            const title = document.getElementById('notice-title-input').value.trim();
+            const content = document.getElementById('notice-content-input').value.trim();
+
+            if (!title || !content) {
+                showToast("Please enter both title and content", "error");
+                return;
+            }
+
+            try {
+                await addDoc(noticesCollectionRef, {
+                    category: cat.toUpperCase(),
+                    date: dateStr,
+                    title: title,
+                    content: content,
+                    timestamp: Date.now()
+                });
+
+                closeNoticeModal();
+                showToast("Notice published immediately!", "success");
+                document.getElementById('notice-title-input').value = '';
+                document.getElementById('notice-content-input').value = '';
+            } catch (err) {
+                console.error("Failed to add notice:", err);
+                showToast("Failed to post notice", "error");
+            }
+        };
+
+        window.deleteNotice = async function(noticeId) {
+            if (!isAdmin || !noticeId) return;
+            try {
+                await deleteDoc(doc(db, ...PUBLIC_DATA_PATH, 'notices', noticeId));
+                showToast("Notice removed", "info");
+            } catch (err) {
+                console.error("Failed to delete notice:", err);
+                showToast("Could not delete notice", "error");
+            }
+        };
+
+        // NAVIGATION TABS
+        window.switchTab = function(tabId) {
+            ['dashboard', 'buildings', 'roadmap', 'readiness', 'notices'].forEach(id => {
+                const sec = document.getElementById(`section-${id}`);
+                const tab = document.getElementById(`tab-${id}`);
+                if (sec) sec.classList.add('hidden');
+                if (tab) tab.classList.remove('active');
+            });
+
+            const activeSec = document.getElementById(`section-${tabId}`);
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            if (activeSec) activeSec.classList.remove('hidden');
+            if (activeTab) activeTab.classList.add('active');
+        };
+
+        // ADMIN MODAL & AUTH LOGIC
+        window.handleAdminBtnClick = function() {
+            if (isAdmin) {
+                // Logout Admin
+                isAdmin = false;
+                document.getElementById('admin-badge').classList.add('hidden');
+                document.getElementById('save-cloud-btn').classList.add('hidden');
+                document.getElementById('add-notice-btn').classList.add('hidden');
+                document.getElementById('admin-btn-icon').className = 'fa-solid fa-lock';
+                document.getElementById('admin-btn-text').innerText = 'Admin Login';
+                clearUnsaved();
+
+                renderBuildings();
+                renderRoadmap();
+                renderChecklist();
+                renderNotices();
+                showToast("Logged out from Admin mode", "info");
+                return;
+            }
+            openAdminModal();
+        };
+
+        window.openAdminModal = function() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-password-input').value = '';
+            document.getElementById('admin-error-msg').classList.add('hidden');
+            setTimeout(() => document.getElementById('admin-password-input').focus(), 100);
+        };
+
+        window.closeAdminModal = function() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        };
+
+        window.verifyAdminPassword = function() {
+            const pwd = document.getElementById('admin-password-input').value.trim();
+            
+            if (pwd === 'anismemon27' || pwd === 'memonanis27@gmail.com') {
+                isAdmin = true;
+                closeAdminModal();
+                document.getElementById('admin-badge').classList.remove('hidden');
+                document.getElementById('save-cloud-btn').classList.remove('hidden');
+                document.getElementById('add-notice-btn').classList.remove('hidden');
+                document.getElementById('admin-btn-icon').className = 'fa-solid fa-right-from-bracket';
+                document.getElementById('admin-btn-text').innerText = 'Logout Admin';
+                
+                renderBuildings();
+                renderRoadmap();
+                renderChecklist();
+                renderNotices();
+                showToast("Authenticated as Administrator!", "success");
+            } else {
+                document.getElementById('admin-error-text').innerText = "Incorrect passcode. Please try again.";
+                document.getElementById('admin-error-msg').classList.remove('hidden');
+            }
+        };
+
+        window.openAddNoticeModal = function() {
+            document.getElementById('notice-modal').classList.remove('hidden');
+        };
+
+        window.closeNoticeModal = function() {
+            document.getElementById('notice-modal').classList.add('hidden');
+        };
+
+        // TOAST FEEDBACK SYSTEM
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-slate-800';
+            const iconClass = type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-triangle-exclamation' : 'fa-circle-info';
+
+            toast.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2.5 transition-all duration-300 transform translate-y-2 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // STARTUP
+        window.onload = function() {
+            initApp();
+        };
+    </script>
+</body>
+</html>
